@@ -14,7 +14,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $username_err = "Please enter a username.";
     } elseif(!preg_match('/^[a-zA-Z0-9_]+$/', trim($_POST["username"]))){
         $username_err = "Username can only contain letters, numbers, and underscores.";
-    } else{
+    }
+    else{
         // Prepare a select statement
         $sql = "SELECT id FROM users WHERE username = ?";
         
@@ -43,13 +44,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             mysqli_stmt_close($stmt);
         }
     }
+
+    $blacklist = array("123456","123456789", "qwerty", "password", "12345", "12345678", "111111", "1234567","123123","1234567890");
+    $uppercase = preg_match('@[A-Z]@', $_POST["password"]);
+    $lowercase = preg_match('@[a-z]@', $_POST["password"]);
+    $number    = preg_match('@[0-9]@', $_POST["password"]);
+    $specialChars = preg_match('@[^\w]@', $_POST["password"]);
     
     // Validate password
-    if(empty(trim($_POST["password"]))){
+    if (empty(trim($_POST["password"]))) {
         $password_err = "Please enter a password.";     
-    } elseif(strlen(trim($_POST["password"])) < 6){
+    } elseif (strlen(trim($_POST["password"])) < 6) {
         $password_err = "Password must have atleast 6 characters.";
-    } else{
+    } elseif (in_array($_POST["password"], $blacklist)) {
+        $password_err = "Password is too weak";
+    } elseif (!$uppercase || !$lowercase || !$number || !$specialChars) {
+        $password_err = "Password must contain at least upper case letter, one lower case letter, one number and one special character";
+    } else {
         $password = trim($_POST["password"]);
     }
     
