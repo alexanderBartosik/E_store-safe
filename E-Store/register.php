@@ -1,6 +1,7 @@
 <?php
 // Include config file
 require_once "config.php";
+require_once "csrf.php";
  
 // Define variables and initialize with empty values
 $username = $password = $confirm_password = "";
@@ -8,6 +9,11 @@ $username_err = $password_err = $confirm_password_err = "";
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
+
+    if (!csrf_check($_POST["csrf"]) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+        exit;
+    }
  
     // Validate username
     if(empty(trim($_POST["username"]))){
@@ -126,7 +132,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         <p>Please fill this form to create an account.</p>
             <div class="form-group">
                 <label>Username</label>
-                <input type="text" name="username" class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $username; ?>">
+                <input type="text" name="username" class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $username; ?>" <?php echo csrf_input_tag();?> >
                 <span class="invalid-feedback"><?php echo $username_err; ?></span>
             </div>    
             <div class="form-group">

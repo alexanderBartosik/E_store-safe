@@ -10,6 +10,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
  
 // Include config file
 require_once "config.php";
+require_once "csrf.php";
  
 // Define variables and initialize with empty values
 $new_password = $confirm_password = "";
@@ -17,6 +18,11 @@ $new_password_err = $confirm_password_err = "";
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
+
+    if (!csrf_check($_POST["csrf"])) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+        exit;
+    }
  
     // Validate new password
     if(empty(trim($_POST["new_password"]))){
@@ -88,7 +94,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post"> 
             <div class="form-group">
                 <label>New Password</label>
-                <input type="password" name="new_password" class="form-control <?php echo (!empty($new_password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_password; ?>">
+                <input type="password" name="new_password" class="form-control <?php echo (!empty($new_password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_password; ?>" <?php echo csrf_input_tag();?> >
                 <span class="invalid-feedback"><?php echo $new_password_err; ?></span>
             </div>
             <div class="form-group">

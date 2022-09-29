@@ -1,19 +1,8 @@
 <style> <?php include 'style-shopping-cart.css'; ?> </style>
 
-<!-- javascript to notify user if they want to go ahead with removal of item/items  -->
-<script language="JavaScript" type="text/javascript">
-function checkRemove(){
-    return confirm('Are you sure?');
-}
-
-function checkCheckout(){
-    window.location.href = 'http://localhost/e-store/checkout-items.php';
-    return confirm('Do you want to buy these items?');
-
-}
-</script>
 
 <?php
+
 
 // Initialize the session
 session_start();
@@ -29,7 +18,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Shopping Cart</title>
+    <title>Receipt</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,900" rel="stylesheet">
     <style>
@@ -42,17 +31,19 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 <?php require_once "navbar.php"; 
 $currentPrice = $nrOfItems = 0;
 $buyers_id = $_SESSION["id"];
-$home_adress = $_SESSION['home_adress'];
+$home_adress = $_SESSION["home_adress"];
+$same_order_id = $_GET['same_order_id'];
+
 ?>
 <div class="w3-container">
     <div class="CartContainer">
         <div class="Header">
-            <h3 class="Heading">Shopping Cart</h3>
-            <a class="Action" href="remove-all-items.php" onclick="return checkRemove()">Remove All</a>
+            <h3 class="Heading">Receipt</h3>
         </div>
+        <h2 class="Heading">Your items will be shipped to <?php echo $home_adress; ?></h2>
     <?php
         require_once "config.php";
-        $query = mysqli_query($link,"select * from orders INNER JOIN product on orders.product_id=product.id where orders.buyers_id='$buyers_id'") or die(mysql_error());
+        $query = mysqli_query($link,"select * from finished_orders INNER JOIN product on finished_orders.product_id=product.id where finished_orders.same_order_id='$same_order_id'") or die(mysql_error());
       
         if(mysqli_num_rows($query) == 0) {
            echo '<tr style="background-color: #ff4d4d"><td colspan="8"><center>No items yet in your shopping cart</center></td></tr>';
@@ -77,9 +68,6 @@ $home_adress = $_SESSION['home_adress'];
                 $nrOfItems = $nrOfItems + 1; 
                  ?>
                 <a class="product-information" href="product-page.php?id=<?php echo $data['id'];?>">Product information </a>
-                <!-- remove from price -->
-                <div></div>
-                <a class="remove" href="remove-one-item.php?order_id=<?php echo $data['order_id']; ?>" onclick="return checkRemove()"><u>Remove</u></a>
             </div>
         </div>
         <hr> 
@@ -106,7 +94,6 @@ $home_adress = $_SESSION['home_adress'];
             </div>
             <div class="total-amount"> <?php echo $currentPrice ?> kr</div>
         </div>
-        <button class="button" href="checkout-items.php" onclick="return checkCheckout()">Checkout</button></div>
     </div>
    </div>
 </body>

@@ -1,6 +1,6 @@
 <style> <?php include 'style.css'; ?> </style>
 <?php
-
+require_once "config.php";
 
 // Initialize the session
 session_start();
@@ -10,6 +10,42 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: login.php");
     exit;
 }
+// $buyers_id = $product_id  = "";
+// $param_buyers_id = $param_product_id = "";
+
+$buyers_id = $_SESSION["id"];
+$product_id = $_GET['id'];
+
+if(isset($_POST['add_to_cart']))
+{
+     $sql = "INSERT INTO orders (buyers_id, product_id) VALUES ($buyers_id, $product_id)";
+ 
+    // //  $result = mysqli_query($link, $sql);
+    //  if (mysqli_query($link, $sql)) {
+    //     echo "Product added to Shopping cart";
+    //   } else {
+    //     echo "Error: " . $sql . "<br>" . mysqli_error($link);
+    //   }
+
+     $sql = "INSERT INTO order (buyers_id, product_id) VALUES (?, ?)";
+         
+        if($stmt = mysqli_prepare($link, $sql)){
+            // Bind variables to the prepared statement as parameters
+            mysqli_stmt_bind_param($stmt, "ss", $buyers_id, $product_id);
+            
+            // Set parameters
+            $param_buyers_id = $_SESSION["id"];
+            $param_product_id = $_GET['id'];
+
+            
+            // Attempt to execute the prepared statement
+            mysqli_stmt_execute($stmt);
+        }
+    mysqli_stmt_close($stmt);
+
+}
+
+
 ?>
  
 <!DOCTYPE html>
@@ -32,7 +68,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
             <section class="cards">
         <?php
-        require_once "config.php";
         $no = 1;
         #Query database to display data
         #change query and adapt
@@ -57,7 +92,9 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                     <h4><b><?php echo $data['name']; ?></b></h4>
                     <h5><b><?php echo $data['brand']; ?></b></h5>
                     <h6><b><?php echo $data['price']; ?>kr</b></h6>
-                        <a href="#" class="btn btn-primary">Add to basket</a>
+                        <form method="post">
+                             <input type="submit" onclick="alert('Product added to Shopping cart')" name="add_to_cart" value="Add to cart" class="btn btn-primary"/>
+                        </form>
                     </div>
                 </div>
                 </div>
