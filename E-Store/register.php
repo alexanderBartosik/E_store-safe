@@ -51,7 +51,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }
     }
 
-    $blacklist = array("123456","123456789", "qwerty", "password", "12345", "12345678", "111111", "1234567","123123","1234567890");
+    $blacklist = array("123", "1234","12345","123456","123456789", "qwerty", "password", "12345678", "111111", "1234567","123123","1234567890");
     $uppercase = preg_match('@[A-Z]@', $_POST["password"]);
     $lowercase = preg_match('@[a-z]@', $_POST["password"]);
     $number    = preg_match('@[0-9]@', $_POST["password"]);
@@ -92,7 +92,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             
             // Set parameters
             $param_username = $username;
-            $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
+            $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash and salt
             
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
