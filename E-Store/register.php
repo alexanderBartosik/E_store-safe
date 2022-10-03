@@ -51,13 +51,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }
     }
 
-    $blacklist = array("123456","123456789", "qwerty", "password", "12345678", "111111", "1234567","123123","1234567890");
+    $blacklist = array("123456789", "password", "12345678", "11111111","12341234","1234567890");
     $uppercase = preg_match('@[A-Z]@', $_POST["password"]);
     $lowercase = preg_match('@[a-z]@', $_POST["password"]);
     $number    = preg_match('@[0-9]@', $_POST["password"]);
     $specialChars = preg_match('@[^\w]@', $_POST["password"]);
     $siteName = array("estore", "e_store", "e-store", "Estore", "E_store", "E-store");
-    $username_pw = preg_match($_POST["username"], $_POST["password"]); //funkar detta?
+    $username_pw = preg_match($_POST["username"], $_POST["password"]); //INTE TESTAT
 
     // Validate password
     if (empty(trim($_POST["password"]))) {
@@ -72,7 +72,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $password_err = "Your username can't be your password.";
     }
     else {
-        foreach($siteName as $pw) {
+        foreach($siteName as $pw) { //INTE TESTAT
             if (preg_match($pw, $POST_["password"])) {
                 $password_err = "Password cannot include site name.";
             }

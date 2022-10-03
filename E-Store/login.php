@@ -16,8 +16,6 @@ require_once "csrf.php";
 $username = $password = "";
 $username_err = $password_err = $login_err = "";
 
-//CSRF token 
-$_SESSION['token'] = md5(uniqid(mt_rand(), true));
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
