@@ -1,6 +1,9 @@
 <style> <?php include 'style.css'; ?> </style>
 <?php
 
+//require_once 'library/HTMLPurifier.auto.php';
+//$config = HTMLPurifier_Config::createDefault();
+
 
 // Initialize the session
 session_start();

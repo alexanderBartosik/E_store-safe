@@ -1,5 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" href="#">Welcome <b><?php echo htmlspecialchars($_SESSION["username"]); ?> </b>to e-store</a>
+  <!--echo htmlspecialchars(...) ovanför skyddar mot XSS. byt ut mot echo $_SESSION["username"]);-->
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
