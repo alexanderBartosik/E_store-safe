@@ -51,25 +51,36 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }
     }
 
-    $blacklist = array("123", "1234","12345","123456","123456789", "qwerty", "password", "12345678", "111111", "1234567","123123","1234567890");
+    $blacklist = array("123456","123456789", "qwerty", "password", "12345678", "111111", "1234567","123123","1234567890");
     $uppercase = preg_match('@[A-Z]@', $_POST["password"]);
     $lowercase = preg_match('@[a-z]@', $_POST["password"]);
     $number    = preg_match('@[0-9]@', $_POST["password"]);
     $specialChars = preg_match('@[^\w]@', $_POST["password"]);
-    
+    $siteName = array("estore", "e_store", "e-store", "Estore", "E_store", "E-store");
+    $username_pw = preg_match($_POST["username"], $_POST["password"]); //funkar detta?
+
     // Validate password
     if (empty(trim($_POST["password"]))) {
         $password_err = "Please enter a password.";     
-    } elseif (strlen(trim($_POST["password"])) < 6) {
-        $password_err = "Password must have atleast 6 characters.";
+    } elseif (strlen(trim($_POST["password"])) < 8) {
+        $password_err = "Password must have atleast 8 characters.";
     } elseif (in_array($_POST["password"], $blacklist)) {
         $password_err = "Password is too weak";
     } elseif (!$uppercase || !$lowercase || !$number || !$specialChars) {
-        $password_err = "Password must contain at least upper case letter, one lower case letter, one number and one special character";
-    } else {
-        $password = trim($_POST["password"]);
+        $password_err = "Password must contain at least upper case letter, one lower case letter, one number and one special character.";
+    } elseif($username_pw) {
+        $password_err = "Your username can't be your password.";
+    }
+    else {
+        foreach($siteName as $pw) {
+            if (preg_match($pw, $POST_["password"])) {
+                $password_err = "Password cannot include site name.";
+            }
+        }
     }
     
+    $password = trim($_POST["password"]);
+
     // Validate confirm password
     if(empty(trim($_POST["confirm_password"]))){
         $confirm_password_err = "Please confirm password.";     
