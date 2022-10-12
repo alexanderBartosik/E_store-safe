@@ -19,40 +19,41 @@ $new_password_err = $confirm_password_err = "";
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 
-    if (!csrf_check($_POST["csrf"])) {
+    /*if (!csrf_check($_POST["csrf"])) {
         header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
         exit;
-    }
+    }*/
  
     $blacklist = array("123456789", "password", "12345678", "11111111","12341234","1234567890");
-    $uppercase = preg_match('@[A-Z]@', $_POST["password"]);
-    $lowercase = preg_match('@[a-z]@', $_POST["password"]);
-    $number    = preg_match('@[0-9]@', $_POST["password"]);
-    $specialChars = preg_match('@[^\w]@', $_POST["password"]);
+    $uppercase = preg_match('@[A-Z]@', $_POST["new_password"]);
+    $lowercase = preg_match('@[a-z]@', $_POST["new_password"]);
+    $number    = preg_match('@[0-9]@', $_POST["new_password"]);
+    $specialChars = preg_match('@[^\w]@', $_POST["new_password"]);
     $siteName = array("estore", "e_store", "e-store", "Estore", "E_store", "E-store");
-    $username_pw = preg_match($_POST["username"], $_POST["password"]); //INTE TESTAT
+    $username_pw = preg_match('@'.$_SESSION["username"].'@', $_POST["new_password"]);
+    
 
     // Validate password
-    if (empty(trim($_POST["password"]))) {
-        $password_err = "Please enter a password.";     
-    } elseif (strlen(trim($_POST["password"])) < 8) {
-        $password_err = "Password must have atleast 8 characters.";
-    } elseif (in_array($_POST["password"], $blacklist)) {
-        $password_err = "Password is too weak";
+    if (empty(trim($_POST["new_password"]))) {
+        $new_password_err = "Please enter a password.";     
+    } elseif (strlen(trim($_POST["new_password"])) < 8) {
+        $new_password_err = "Password must have atleast 8 characters.";
+    } elseif (in_array($_POST["new_password"], $blacklist)) {
+        $new_password_err = "Password is too weak";
     } elseif (!$uppercase || !$lowercase || !$number || !$specialChars) {
-        $password_err = "Password must contain at least upper case letter, one lower case letter, one number and one special character.";
+        $new_password_err = "Password must contain at least upper case letter, one lower case letter, one number and one special character.";
     } elseif($username_pw) {
-        $password_err = "Your username can't be your password.";
+        $new_password_err = "Your password can't contain your username.";
     }
     else {
         foreach($siteName as $pw) { //INTE TESTAT
-            if (preg_match($pw, $POST_["password"])) {
-                $password_err = "Password cannot include site name.";
+            if (preg_match('@'.$pw.'@', $_POST["new_password"])) {
+                $new_password_err = "Password cannot include site name.";
             }
         }
     }
     
-    $password = trim($_POST["password"]);
+    $new_password = trim($_POST["new_password"]);
     
     // Validate confirm password
     if(empty(trim($_POST["confirm_password"]))){

@@ -15,15 +15,17 @@ require_once "csrf.php";
 // Define variables and initialize with empty values
 $username = $password = "";
 $username_err = $password_err = $login_err = "";
-
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 
-    if (!csrf_check($_POST["csrf"])) {
+
+    if (!isset($_POST["token"]) || !isset($_SESSION["token"])) { 
         header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-        exit;
+        exit(); 
     }
+    
+    if ($_POST["token"] == $_SESSION["token"]) {
  
     // Check if username is empty
     if(empty(trim($_POST["username"]))){
@@ -77,13 +79,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         } else{
                             // Password is not valid, display a generic error message
                             $login_err = "Invalid username or password, try again in 10 seconds.";
-                            sleep(10);
                         }
                     }
                 } else{
                     // Username doesn't exist, display a generic error message
                     $login_err = "Invalid username or password, try again in 10 seconds.";
-                    sleep(10);
                 }
             } else{
                 echo "Oops! Something went wrong. Please try again later.";
@@ -91,11 +91,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
             // Close statement
             mysqli_stmt_close($stmt);
+
         }
     }
-    
+
     // Close connection
     mysqli_close($link);
+}
 }
 ?>
  
@@ -117,9 +119,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         <?php 
         if(!empty($login_err)){
             echo '<div class="alert alert-danger">' . $login_err . '</div>';
+            ob_end_flush();
+            flush();
+            sleep(10);
         }        
         ?>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" class="col-lg-6 offset-lg-3 ">
+        <input type="hidden" name="token" value="<?=$_SESSION["token"]?>"/>
 
         <h2>Login</h2>
         <p>Please fill in your credentials to login.</p>
@@ -138,6 +144,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 <input type="submit" class="btn btn-primary" value="Login">
             </div>
             <p>Don't have an account? <a href="register.php">Sign up now</a>.</p>
+            
         </form>
     </div>
 </body>

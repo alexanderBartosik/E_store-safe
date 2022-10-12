@@ -7,6 +7,8 @@
 
 // Initialize the session
 session_start();
+
+$_SESSION["token"] = bin2hex(random_bytes(32));
  
 // Check if the user is logged in, if not then redirect him to login page
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){

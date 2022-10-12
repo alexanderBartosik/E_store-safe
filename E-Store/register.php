@@ -4,16 +4,16 @@ require_once "config.php";
 require_once "csrf.php";
  
 // Define variables and initialize with empty values
-$username = $password = $confirm_password = "";
-$username_err = $password_err = $confirm_password_err = "";
+$username = $password = $confirm_password = $home_adress = "";
+$username_err = $password_err = $confirm_password_err = $home_adress_err = "";
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 
-    if (!csrf_check($_POST["csrf"]) {
+    /*if (!csrf_check($_POST["csrf"]) {
         header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
         exit;
-    }
+    }*/
  
     // Validate username
     if(empty(trim($_POST["username"]))){
@@ -72,11 +72,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $password_err = "Your username can't be your password.";
     }
     else {
-        foreach($siteName as $pw) { //INTE TESTAT
+        /*foreach($siteName as $pw) { //INTE TESTAT
             if (preg_match($pw, $POST_["password"])) {
                 $password_err = "Password cannot include site name.";
             }
-        }
+        }*/
     }
     
     $password = trim($_POST["password"]);
@@ -90,20 +90,27 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $confirm_password_err = "Password did not match.";
         }
     }
+
+    if(empty(trim($_POST["home_adress"]))){
+        $home_adress_err  = "Please enter a home adress";     
+    } else{
+        $home_adress = trim($_POST["home_adress"]);
+    }
     
     // Check input errors before inserting in database
     if(empty($username_err) && empty($password_err) && empty($confirm_password_err)){
         
         // Prepare an insert statement
-        $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        $sql = "INSERT INTO users (username, password, home_adress) VALUES (?, ?, ?)";
          
         if($stmt = mysqli_prepare($link, $sql)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "ss", $param_username, $param_password);
+            mysqli_stmt_bind_param($stmt, "sss", $param_username, $param_password, $param_home_adress);
             
             // Set parameters
             $param_username = $username;
             $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash and salt
+            $param_home_adress = $home_adress;
             
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
@@ -155,6 +162,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 <label>Confirm Password</label>
                 <input type="password" name="confirm_password" class="form-control <?php echo (!empty($confirm_password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $confirm_password; ?>">
                 <span class="invalid-feedback"><?php echo $confirm_password_err; ?></span>
+            </div>
+            <div class="form-group">
+                <label>Enter Home adress</label>
+                <input type="text" name="home_adress" class="form-control <?php echo (!empty($home_adress_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $home_adress; ?>">
+                <span class="invalid-feedback"><?php echo $home_adress_err; ?></span>
             </div>
             <div class="form-group">
                 <input type="submit" class="btn btn-primary" value="Submit">
