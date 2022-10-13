@@ -13,8 +13,8 @@
 <div class="text-center">
 <img src="Estore_logo.png" class="rounded" alt="...">
     </div>
-        <!-- <form action="http://localhost/e_store-safe/e-store/login.php" method="POST"> -->
-            <form action="http://localhost/e-store/login.php" method="POST">
+        <form action="http://localhost/e_store-safe/e-store/login.php" method="POST">
+            <!-- <form action="http://localhost/e-store/login.php" method="POST"> -->
         <!-- <input type="hidden" name="Jacob_123" password="E_store12345!" value="CONFIRM"/> -->
         <input type="submit" value="Attack"/>
         </form>

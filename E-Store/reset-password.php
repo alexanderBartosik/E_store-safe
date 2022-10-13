@@ -24,7 +24,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         exit;
     }*/
  
-    $blacklist = array("123456789", "password", "12345678", "11111111","12341234","1234567890");
+    $blacklist = array("123Password!", "Password123!", "Pass1234!", "1234Pass!");
     $uppercase = preg_match('@[A-Z]@', $_POST["new_password"]);
     $lowercase = preg_match('@[a-z]@', $_POST["new_password"]);
     $number    = preg_match('@[0-9]@', $_POST["new_password"]);
@@ -46,7 +46,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $new_password_err = "Your password can't contain your username.";
     }
     else {
-        foreach($siteName as $pw) { //INTE TESTAT
+        foreach($siteName as $pw) {
             if (preg_match('@'.$pw.'@', $_POST["new_password"])) {
                 $new_password_err = "Password cannot include site name.";
             }
