@@ -19,10 +19,12 @@ $new_password_err = $confirm_password_err = "";
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 
-    /*if (!csrf_check($_POST["csrf"])) {
+    if (!isset($_POST["token"]) || !isset($_SESSION["token"])) { 
         header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-        exit;
-    }*/
+        exit(); 
+    }
+    
+    if ($_POST["token"] == $_SESSION["token"]) {
  
     $blacklist = array("123Password!", "Password123!", "Pass1234!", "1234Pass!");
     $uppercase = preg_match('@[A-Z]@', $_POST["new_password"]);
@@ -31,7 +33,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $specialChars = preg_match('@[^\w]@', $_POST["new_password"]);
     $siteName = array("estore", "e_store", "e-store", "Estore", "E_store", "E-store");
     $username_pw = preg_match('@'.$_SESSION["username"].'@', $_POST["new_password"]);
-    
 
     // Validate password
     if (empty(trim($_POST["new_password"]))) {
@@ -96,6 +97,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Close connection
     mysqli_close($link);
 }
+}
 ?>
  
 <!DOCTYPE html>
@@ -114,6 +116,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         <h2>Reset Password</h2>
         <p>Please fill out this form to reset your password.</p>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post"> 
+        <input type="hidden" name="token" value="<?=$_SESSION["token"]?>"/>
+
             <div class="form-group">
                 <label>New Password</label>
                 <input type="password" name="new_password" class="form-control <?php echo (!empty($new_password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_password; ?>" <?php echo csrf_input_tag();?> >

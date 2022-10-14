@@ -8,6 +8,7 @@
 // Initialize the session
 session_start();
 
+// CSRF token
 $_SESSION["token"] = bin2hex(random_bytes(32));
  
 // Check if the user is logged in, if not then redirect him to login page

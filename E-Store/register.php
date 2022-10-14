@@ -10,10 +10,12 @@ $username_err = $password_err = $confirm_password_err = $home_adress_err = "";
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 
-    /*if (!csrf_check($_POST["csrf"]) {
+    if (!isset($_POST["token"]) || !isset($_SESSION["token"])) { 
         header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-        exit;
-    }*/
+        exit(); 
+    }
+    
+    if ($_POST["token"] == $_SESSION["token"]) {
  
     // Validate username
     if(empty(trim($_POST["username"]))){
@@ -129,6 +131,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Close connection
     mysqli_close($link);
 }
+}
 ?>
  
 <!DOCTYPE html>
@@ -147,6 +150,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <img src="Estore_logo.png" class="rounded" alt="...">
 </div>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" class="col-lg-6 offset-lg-3 ">
+        <input type="hidden" name="token" value="<?=$_SESSION["token"]?>"/>
+
         <h2>Sign Up</h2>
         <p>Please fill this form to create an account.</p>
             <div class="form-group">
